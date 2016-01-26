@@ -30,7 +30,7 @@ function getMessage(a,b){
       return ('Я прошёл ' + length + ' метров');
     }
 
-    else (a instanceof Array) {
+    else {
       var sum = 0;
       for (var i = 0; i <a.length; i++) {
         sum = sum + a[i];

@@ -375,6 +375,16 @@
     },
 
     /**
+     * Отрисовка сообщения.
+     */
+
+    _drawMessage: function () {
+
+      var ctx = this.ctx;
+
+    },
+
+    /**
      * Отрисовка экрана паузы.
      */
     _drawPauseScreen: function() {

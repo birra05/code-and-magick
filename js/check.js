@@ -21,6 +21,20 @@ function getMessage(a,b){
     }
   }
 
+  if (a instanceof Array && !(b instanceof Array)) {
+    if(a) {
+      var sum = 0;
+      for (var i = 0; i <a.length; i++) {
+        sum = sum + a[i];
+      };
+      return ('Я прошёл ' + sum + ' шагов');
+    }
+    
+    else {
+
+    }
+  }
+
   if (a instanceof Array && b instanceof Array) {
     if(a) {
       var length = 0;
@@ -31,11 +45,7 @@ function getMessage(a,b){
     }
 
     else {
-      var sum = 0;
-      for (var i = 0; i <a.length; i++) {
-        sum = sum + a[i];
-      };
-      return ('Я прошёл ' + sum + ' шагов');
+
     }
   }
 }

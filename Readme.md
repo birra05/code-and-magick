@@ -14,8 +14,6 @@
 ##### Вы прошли интенсивный онлайн-курс «Продвинутый HTML и CSS»?
 `Да, успешно`.
 
----
-
 _Не удаляйте и не обращайте внимание на файлы:_<br>
 _`.editorconfig`, `.eslintignore`, `.eslintrc`, `.gitignore`, `.travis.yml`, `Makefile`, `package.json`._
 

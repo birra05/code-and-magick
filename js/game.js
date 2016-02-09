@@ -385,19 +385,19 @@
       // тень
       ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
       ctx.beginPath();
-      ctx.moveTo(320,90);
-      ctx.lineTo(620,90);
-      ctx.lineTo(620,200);
-      ctx.lineTo(300,220);
+      ctx.moveTo(320, 90);
+      ctx.lineTo(620, 90);
+      ctx.lineTo(620, 200);
+      ctx.lineTo(300, 220);
       ctx.fill();
 
       // окно
       ctx.fillStyle = '#fff';
       ctx.beginPath();
-      ctx.moveTo(310,80);
-      ctx.lineTo(610,80);
-      ctx.lineTo(610,190);
-      ctx.lineTo(290,210);
+      ctx.moveTo(310, 80);
+      ctx.lineTo(610, 80);
+      ctx.lineTo(610, 190);
+      ctx.lineTo(290, 210);
       ctx.fill();
 
       // текст
@@ -418,10 +418,8 @@
           ctx.fillText(line, marginLeft, marginTop);
           line = words[n] + ' ';
           marginTop += lineHeight;
-        }
-
-        else {
-         line = textLine;
+        } else {
+          line = textLine;
         }
       }
 
@@ -435,21 +433,21 @@
     _drawPauseScreen: function() {
       switch (this.state.currentStatus) {
         case Verdict.WIN:
-        this._drawMessage('Вы победили!');
-        // console.log('you have won!');
-        break;
+          this._drawMessage('Вы победили!');
+          // console.log('you have won!');
+          break;
         case Verdict.FAIL:
-        this._drawMessage('Вы проиграли!');
-        // console.log('you have failed!');
-        break;
+          this._drawMessage('Вы проиграли!');
+          // console.log('you have failed!');
+          break;
         case Verdict.PAUSE:
-        this._drawMessage('Пауза. Нажмите Пробел для продолжения');
-        // console.log('game is on pause!');
-        break;
+          this._drawMessage('Пауза. Нажмите Пробел для продолжения');
+          // console.log('game is on pause!');
+          break;
         case Verdict.INTRO:
-        this._drawMessage('Добро пожаловать в игру! Нажмите Пробел для продолжения');
-        // console.log('welcome to the game! Press Space to start');
-        break;
+          this._drawMessage('Добро пожаловать в игру! Нажмите Пробел для продолжения');
+          // console.log('welcome to the game! Press Space to start');
+          break;
       }
     },
 

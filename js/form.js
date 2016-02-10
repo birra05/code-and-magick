@@ -24,6 +24,10 @@
   var reviewNameLabel = reviewFields.querySelector('label[for="review-name"]');
   var reviewTextLabel = reviewFields.querySelector('label[for="review-text"]');
 
+  for (var i = 0; i < reviewMark.length; i++) {
+    reviewMark[i].onclick = checkForm;
+  }
+
   reviewName.oninput = checkForm;
   reviewText.oninput = checkForm;
 

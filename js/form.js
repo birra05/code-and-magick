@@ -1,3 +1,5 @@
+/*global docCookies*/
+
 'use strict';
 
 (function() {
@@ -16,6 +18,7 @@
     formContainer.classList.add('invisible');
   };
 
+  // var reviewForm = document.querySelector('.review-form');
   var reviewName = document.getElementById('review-name');
   var reviewText = document.getElementById('review-text');
   var reviewMark = document.querySelectorAll('input[name="review-mark"]');
@@ -23,6 +26,11 @@
   var reviewFields = document.querySelector('.review-fields');
   var reviewNameLabel = reviewFields.querySelector('label[for="review-name"]');
   var reviewTextLabel = reviewFields.querySelector('label[for="review-text"]');
+
+  // Установка начальных значений в полях, берем из cookies
+
+  reviewName.value = docCookies.getItem('name') || '';
+  reviewMark.value = docCookies.getItem('mark') || 3;
 
   for (var i = 0; i < reviewMark.length; i++) {
     reviewMark[i].onclick = checkForm;
@@ -82,6 +90,8 @@
     }
   }
 
+  // Реакция формы на клики и ввод текста в разных полях
+
   function checkForm() {
     console.log('check');
     reviewMarkCheck();
@@ -89,5 +99,27 @@
     reviewTextCheck();
     reviewBlockVisible();
   }
+
+  // Определяем cookies
+
+  reviewSubmit.onsubmit = function(evt) {
+    evt.preventDefault();
+
+    var nowDate = new Date();
+    // День рождения - 5 ноября
+    var birthDate = new Date(nowDate.getFullYear(), 10, 5);
+    var lastYear = nowDate.getFullYear() - 1;
+    if (nowDate < birthDate) {
+      var lastBirthDate = new Date(lastYear, 10, 5);
+    }
+
+    var dateToExpire = new Date(nowDate.valueOf() + (nowDate - lastBirthDate));
+    var formatDateToExpire = new Date(dateToExpire).toUTCString();
+
+    docCookies.setItem('name', reviewName.value, formatDateToExpire);
+    docCookies.setItem('mark', reviewMark.value, formatDateToExpire);
+
+    reviewSubmit.submit();
+  };
 
 })();

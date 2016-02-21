@@ -48,7 +48,6 @@
       reviewMark[i].onclick = checkForm;
       if (reviewMark[i].checked) {
         if (parseInt(reviewMark[i].value, 10) < 4) {
-          // reviewText.required = true;
           reviewTextLabel.classList.remove('invisible');
         } else {
           reviewTextLabel.classList.add('invisible');

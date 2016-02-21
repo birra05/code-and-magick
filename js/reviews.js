@@ -1,5 +1,3 @@
-/*global reviews*/
-
 'use strict';
 
 (function() {
@@ -12,6 +10,9 @@
   // Блок для вывода созданных элементов
 
   var container = document.querySelector('.reviews-list');
+
+  // Вызов функции получения отзывов через http
+  getReviews();
 
   // Для отображения корректного рейтинга
 
@@ -27,12 +28,29 @@
     element.querySelector('.review-rating').classList.add(ratingArray[rate]);
   }
 
-  // Перебрать все элементы в структуре данных
+  // Отрисовка списка отелей
 
-  reviews.forEach(function(review) {
-    var element = getElementFromTemplate(review);
-    container.appendChild(element);
-  });
+  function renderReviews(reviews) {
+    reviews.forEach(function(review) {
+      var element = getElementFromTemplate(review);
+      container.appendChild(element);
+    });
+  }
+
+  // Получение данных по http
+
+  function getReviews() {
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', '//o0.github.io/assets/json/reviews.json');
+    xhr.onload = function(evt) {
+      var rawData = evt.target.response;
+      var loadedReviews = JSON.parse(rawData);
+
+      // Обработка загруженных данных
+      renderReviews(loadedReviews);
+    };
+    xhr.send();
+  }
 
   // Шаблон
 

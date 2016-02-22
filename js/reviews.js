@@ -3,16 +3,36 @@
 (function() {
   var reviewFilter = document.querySelector('.reviews-filter');
   var reviewsBlock = document.querySelector('.reviews');
-
-  var filters = document.querySelectorAll('[name="reviews"]');
   var reviews = [];
-  for (var i = 0; i < filters.length; i++) {
-    filters[i].onclick = function(evt) {
-      var clickedElementID = evt.target.id;
-      setActiveFilter(clickedElementID);
-    };
-  }
+  var filteredReviews = [];
+  var currentPage = 0;
+  var PAGE_SIZE = 3;
+  var moreReviewsButton = document.querySelector('.reviews-controls-more');
+
+  // Делегирование
+
+  var filters = document.querySelector('.reviews-filter');
+  filters.addEventListener('click', function(evt) {
+    var clickedElement = evt.target;
+    if (clickedElement.classList.contains('reviews-filter-item')) {
+      setActiveFilter(clickedElement.htmlFor);
+    }
+  });
+
+  // Кнопка Еще отзывы
+
+  moreReviewsButton.addEventListener('click', function() {
+    console.log('страница ' + currentPage); //для проверки
+    if (currentPage < Math.ceil(filteredReviews.length / PAGE_SIZE)) {
+      renderReviews(filteredReviews, ++currentPage);
+      moreReviewsButton.classList.remove('invisible');
+    } else {
+      moreReviewsButton.classList.add('invisible');
+    }
+  });
+
   // Спрятать блок с фильтрами
+
   reviewFilter.classList.add('invisible');
 
   // Блок для вывода созданных элементов
@@ -39,26 +59,34 @@
 
   // Отрисовка списка отзывов
 
-  function renderReviews(reviewsArray) {
-    // Для корректной работы фильтров
-    container.innerHTML = '';
+  function renderReviews(reviewsArray, pageNumber, replace) {
+    // Перезаписывать содержимое контейнера
+    if (replace) {
+      container.innerHTML = '';
+      currentPage = 0;
+    }
     // Оптимизация отрисовки списка отзывов
     var fragment = document.createDocumentFragment();
+    // Для постраничного вывода отзывов
+    var from = pageNumber * PAGE_SIZE;
+    var to = from + PAGE_SIZE;
+    var pageReviews = reviewsArray.slice(from, to);
     // Непосредственно отрисовка отзывов
-    reviewsArray.forEach(function(review) {
+    pageReviews.forEach(function(review) {
       var element = getElementFromTemplate(review);
       fragment.appendChild(element);
     });
     container.appendChild(fragment);
     reviewsBlock.classList.remove('reviews-list-loading');
+    moreReviewsButton.classList.remove('invisible'); //не уверена, что это корректно. В случае, если подгрузится мало отзывов, кнопка будет доступна, а это неправильно
   }
 
-  //Фильтр срабатывает по нажатию на кнопки
+  //Фильтры
 
   function setActiveFilter(id) {
 
     // Отсортировать и отфильтровать
-    var filteredReviews = reviews.slice(0);
+    filteredReviews = reviews.slice(0);
 
     switch (id) {
       case 'reviews-all':
@@ -101,7 +129,8 @@
         });
         break;
     }
-    renderReviews(filteredReviews);
+    renderReviews(filteredReviews, 0, true);
+    console.log('страница ' + currentPage); //для проверки
   }
 
   // Получение данных по http
@@ -116,7 +145,7 @@
       reviews = loadedReviews;
 
       // Обработка загруженных данных
-      renderReviews(loadedReviews);
+      renderReviews(loadedReviews, 0, true);
     };
     xhr.onerror = function() {
       reviewsBlock.classList.add('reviews-load-failure');

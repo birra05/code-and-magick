@@ -69,6 +69,21 @@
     DOWN: 8
   };
 
+  // Двигаем облачка
+
+  var clouds = document.querySelector('.header-clouds');
+  var IMAGE_WIDTH = 1024;
+  // var demo = document.querySelector('.demo');
+  // console.log(window.innerHeight);
+
+  window.addEventListener('scroll', function() {
+    // Если игра не видна — поставить игру на паузу
+    if (game.getBoundingClientRect().top + game.clientHeight < 0) {
+      game.setGameStatus(window.Game.Verdict.PAUSE);
+      console.log('тест');
+    }
+  });
+
   /**
    * Правила перерисовки объектов в зависимости от состояния игры.
    * @type {Object.<ObjectType, function(Object, Object, number): Object>}

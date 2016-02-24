@@ -69,6 +69,34 @@
     DOWN: 8
   };
 
+  // Двигаем облачка
+
+  var clouds = document.querySelector('.header-clouds');
+  var gameBlock = document.querySelector('.demo');
+  // var lastTop = document.body.scrollTop;
+  clouds.style.backgroundPosition = '0px';
+
+  window.addEventListener('scroll', function() {
+    console.log(window.pageYOffset, 'сколько прокручено пикселей вниз');
+    console.log(clouds.getBoundingClientRect().top, 'сколько от начала экрана до блока');
+    // var diff = document.body.scrollTop - lastTop;
+    var step;
+
+    if (clouds.getBoundingClientRect().top < 0) {
+      step = 10;
+    } else {
+      step = -10;
+    }
+
+    clouds.style.backgroundPosition = (parseInt(clouds.style.backgroundPosition, 10) + step) + 'px';
+    console.log(parseInt(clouds.style.backgroundPosition, 10), step);
+    // Если игра не видна — поставить игру на паузу
+    if (gameBlock.getBoundingClientRect().top + gameBlock.clientHeight < 0) {
+      game.setGameStatus(window.Game.Verdict.PAUSE);
+      console.log('проверка');
+    }
+  });
+
   /**
    * Правила перерисовки объектов в зависимости от состояния игры.
    * @type {Object.<ObjectType, function(Object, Object, number): Object>}

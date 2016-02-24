@@ -22,13 +22,8 @@
   // Кнопка Еще отзывы
 
   moreReviewsButton.addEventListener('click', function() {
+    renderReviews(filteredReviews, ++currentPage);
     console.log('страница ' + currentPage); //для проверки
-    if (currentPage < Math.ceil(filteredReviews.length / PAGE_SIZE)) {
-      renderReviews(filteredReviews, ++currentPage);
-      moreReviewsButton.classList.remove('invisible');
-    } else {
-      moreReviewsButton.classList.add('invisible');
-    }
   });
 
   // Спрятать блок с фильтрами
@@ -60,6 +55,7 @@
   // Отрисовка списка отзывов
 
   function renderReviews(reviewsArray, pageNumber, replace) {
+    console.log(reviewsArray);
     // Перезаписывать содержимое контейнера
     if (replace) {
       container.innerHTML = '';
@@ -78,7 +74,11 @@
     });
     container.appendChild(fragment);
     reviewsBlock.classList.remove('reviews-list-loading');
-    moreReviewsButton.classList.remove('invisible'); //не уверена, что это корректно. В случае, если подгрузится мало отзывов, кнопка будет доступна, а это неправильно
+    if (to < filteredReviews.length) {
+      moreReviewsButton.classList.remove('invisible');
+    } else {
+      moreReviewsButton.classList.add('invisible');
+    }
   }
 
   //Фильтры
@@ -143,9 +143,10 @@
       var rawData = evt.target.response;
       var loadedReviews = JSON.parse(rawData);
       reviews = loadedReviews;
+      filteredReviews = loadedReviews;
 
       // Обработка загруженных данных
-      renderReviews(loadedReviews, 0, true);
+      renderReviews(filteredReviews, 0, true);
     };
     xhr.onerror = function() {
       reviewsBlock.classList.add('reviews-load-failure');

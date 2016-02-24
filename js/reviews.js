@@ -55,7 +55,6 @@
   // Отрисовка списка отзывов
 
   function renderReviews(reviewsArray, pageNumber, replace) {
-    console.log(reviewsArray);
     // Перезаписывать содержимое контейнера
     if (replace) {
       container.innerHTML = '';

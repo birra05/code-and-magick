@@ -69,31 +69,27 @@
     DOWN: 8
   };
 
-  // Двигаем облачка
+  // Двигаем облачка, ставим таймаут и паузу
 
   var clouds = document.querySelector('.header-clouds');
   var gameBlock = document.querySelector('.demo');
-  // var lastTop = document.body.scrollTop;
-  clouds.style.backgroundPosition = '0px';
+  var IMAGE_WIDTH = 1024;
+  var cloudsStart = (clouds.getBoundingClientRect().width - IMAGE_WIDTH) / 2;
 
   window.addEventListener('scroll', function() {
-    console.log(window.pageYOffset, 'сколько прокручено пикселей вниз');
-    console.log(clouds.getBoundingClientRect().top, 'сколько от начала экрана до блока');
-    // var diff = document.body.scrollTop - lastTop;
-    var step;
 
-    if (clouds.getBoundingClientRect().top < 0) {
-      step = 10;
-    } else {
-      step = -10;
+    // В зависимости от положения прокрутки смещается положение блока с облачками
+
+    if (clouds.getBoundingClientRect().bottom > 0) {
+      clouds.style.backgroundPosition = cloudsStart - (clouds.getBoundingClientRect().bottom - clouds.getBoundingClientRect().height) + 'px';
+      console.log(clouds.style.backgroundPosition);
     }
 
-    clouds.style.backgroundPosition = (parseInt(clouds.style.backgroundPosition, 10) + step) + 'px';
-    console.log(parseInt(clouds.style.backgroundPosition, 10), step);
     // Если игра не видна — поставить игру на паузу
-    if (gameBlock.getBoundingClientRect().top + gameBlock.clientHeight < 0) {
+
+    if (gameBlock.getBoundingClientRect().bottom < 0) {
       game.setGameStatus(window.Game.Verdict.PAUSE);
-      console.log('проверка');
+      console.log('пауза, приди');
     }
   });
 

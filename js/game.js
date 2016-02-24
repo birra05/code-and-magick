@@ -73,26 +73,27 @@
 
   var clouds = document.querySelector('.header-clouds');
   var gameBlock = document.querySelector('.demo');
-  // var demo = document.querySelector('.demo');
-  // console.log(window.innerHeight);
-  var lastTop = document.body.scrollTop;
+  // var lastTop = document.body.scrollTop;
   clouds.style.backgroundPosition = '0px';
 
   window.addEventListener('scroll', function() {
-    var diff = document.body.scrollTop - lastTop;
+    console.log(window.pageYOffset, 'сколько прокручено пикселей вниз');
+    console.log(clouds.getBoundingClientRect().top, 'сколько от начала экрана до блока');
+    // var diff = document.body.scrollTop - lastTop;
     var step;
-    if (diff > 0) {
+
+    if (clouds.getBoundingClientRect().top < 0) {
       step = 10;
-      // clouds.style.backgroundPosition = (parseInt(clouds.style.backgroundPosition, 10) + 5) + 'px';
     } else {
       step = -10;
     }
+
     clouds.style.backgroundPosition = (parseInt(clouds.style.backgroundPosition, 10) + step) + 'px';
     console.log(parseInt(clouds.style.backgroundPosition, 10), step);
     // Если игра не видна — поставить игру на паузу
     if (gameBlock.getBoundingClientRect().top + gameBlock.clientHeight < 0) {
       game.setGameStatus(window.Game.Verdict.PAUSE);
-      console.log('тест');
+      console.log('проверка');
     }
   });
 

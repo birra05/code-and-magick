@@ -74,23 +74,27 @@
   var clouds = document.querySelector('.header-clouds');
   var gameBlock = document.querySelector('.demo');
   var IMAGE_WIDTH = 1024;
+  var scrollTimeout;
   var cloudsStart = (clouds.getBoundingClientRect().width - IMAGE_WIDTH) / 2;
 
   window.addEventListener('scroll', function() {
 
     // В зависимости от положения прокрутки смещается положение блока с облачками
+    // Если блок с облаками не виден, смещения облаков не происходит
 
     if (clouds.getBoundingClientRect().bottom > 0) {
       clouds.style.backgroundPosition = cloudsStart - (clouds.getBoundingClientRect().bottom - clouds.getBoundingClientRect().height) + 'px';
-      console.log(clouds.style.backgroundPosition);
+      console.log('если блок не виден, то смещения облаков не происходит');
     }
 
-    // Если игра не видна — поставить игру на паузу
-
-    if (gameBlock.getBoundingClientRect().bottom < 0) {
-      game.setGameStatus(window.Game.Verdict.PAUSE);
-      console.log('пауза, приди');
-    }
+    clearTimeout(scrollTimeout);
+    scrollTimeout = setTimeout(function() {
+      // Если игра не видна — поставить игру на паузу
+      if (gameBlock.getBoundingClientRect().bottom <= 0) {
+        game.setGameStatus(window.Game.Verdict.PAUSE);
+        console.log('пауза');
+      }
+    }, 100);
   });
 
   /**

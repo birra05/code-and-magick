@@ -80,7 +80,6 @@
   window.addEventListener('scroll', function() {
 
     // В зависимости от положения прокрутки смещается положение блока с облачками
-    // Если блок с облаками не виден, смещения облаков не происходит
 
     if (clouds.getBoundingClientRect().bottom > 0) {
       clouds.style.backgroundPosition = cloudsStart - (clouds.getBoundingClientRect().bottom - clouds.getBoundingClientRect().height) + 'px';

@@ -22,7 +22,11 @@
 
   function _onClick(evt) {
     evt.preventDefault();
-    gallery.show();
+    var clickedElementImage = evt.target.parentElement;
+    if (clickedElementImage.classList.contains('photogallery-image')) {
+      gallery.show();
+      console.log('галерея открывается только по нажатию на фото');
+    }
   }
 
   // Делегирование
@@ -59,6 +63,7 @@
       // Удаление каждого из элементов через вызов removeChild
       var renderedReviews = container.querySelectorAll('.review');
       [].forEach.call(renderedReviews, function(elem) {
+        elem.removeEventListener('click', _onClick);
         container.removeChild(elem);
         console.log('удаление работает');
       });

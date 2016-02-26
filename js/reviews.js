@@ -43,6 +43,7 @@
   function renderReviews(reviewsArray, pageNumber, replace) {
     // Перезаписывать содержимое контейнера
     if (replace) {
+      currentPage = 0;
       // Удаление каждого из элементов через вызов removeChild
       var renderedReviews = container.querySelectorAll('.review');
       [].forEach.call(renderedReviews, function(elem) {

@@ -1,17 +1,29 @@
-/* global Review: true */
+/* global Review: true, Gallery: true */
 
 'use strict';
 
 (function() {
   var reviewFilter = document.querySelector('.reviews-filter');
   var reviewsBlock = document.querySelector('.reviews');
-  // Блок для вывода созданных элементоd
+  // Блок для вывода созданных элементов
   var container = document.querySelector('.reviews-list');
   var reviews = [];
   var filteredReviews = [];
   var currentPage = 0;
   var PAGE_SIZE = 3;
+  // Галерея
+  var photogallery = document.querySelector('.photogallery');
+  var gallery = new Gallery();
   var moreReviewsButton = document.querySelector('.reviews-controls-more');
+
+  // Открываем галерею
+
+  photogallery.addEventListener('click', _onClick);
+
+  function _onClick(evt) {
+    evt.preventDefault();
+    gallery.show();
+  }
 
   // Делегирование
 

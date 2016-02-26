@@ -19,7 +19,7 @@
   "scripts": {
     "gosha": "make",
     "test": "eslint js/",
-    "start": "http-server ."
+    "start": "http-server -p 8000"
   },
   "engines": {
     "node": "^5.0.0"

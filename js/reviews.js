@@ -76,13 +76,14 @@
     var pageReviews = reviewsArray.slice(from, to);
     // Непосредственно отрисовка отзывов
     pageReviews.forEach(function(review) {
-      // var element = getElementFromTemplate(review);
+      // Отрисовка каждого отзыва
       var reviewElement = new Review(review);
       reviewElement.render();
       fragment.appendChild(reviewElement.element);
     });
     container.appendChild(fragment);
     reviewsBlock.classList.remove('reviews-list-loading');
+    // Определяем, когда показывать кнопку Еще отзывы
     if (to < filteredReviews.length) {
       moreReviewsButton.classList.remove('invisible');
     } else {

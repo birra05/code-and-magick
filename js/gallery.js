@@ -17,6 +17,9 @@
   Gallery.prototype.show = function() {
     this.element.classList.remove('invisible');
 
+    // Показываем текущую картинку в галерее
+    this.setCurrentPicture(0);
+
     // Обработчик клика по крестику
     this._closeButton.addEventListener('click', this._onCloseClick);
 
@@ -26,6 +29,22 @@
 
     // Нажатие ESC закрывает галерею
     document.addEventListener('keydown', this._onKeyClick);
+  };
+
+  Gallery.prototype.setPictures = function(Photo) {
+    this._Photos = Photo.slice(0);
+  };
+
+  // Взято с кексобукинга, надо переделать под себя
+
+  Gallery.prototype.setCurrentPicture = function(number) {
+    var IMAGE_HEIGHT = 300;
+    var image = new Image();
+    image.src = this._Photos[number]._src;
+    image.height = IMAGE_HEIGHT;
+    var imageContainer = this.element.querySelector('.overlay-gallery-preview');
+
+    imageContainer.appendChild(image);
   };
 
   // Скрыть галерею

@@ -83,7 +83,6 @@
 
     if (clouds.getBoundingClientRect().bottom > 0) {
       clouds.style.backgroundPosition = cloudsStart - (clouds.getBoundingClientRect().bottom - clouds.getBoundingClientRect().height) + 'px';
-      console.log('облака смещаются только, когда виден блок с облаками');
     }
 
     clearTimeout(scrollTimeout);
@@ -91,7 +90,6 @@
       // Если игра не видна — поставить игру на паузу
       if (gameBlock.getBoundingClientRect().bottom <= 0) {
         game.setGameStatus(window.Game.Verdict.PAUSE);
-        console.log('пауза');
       }
     }, 100);
   });

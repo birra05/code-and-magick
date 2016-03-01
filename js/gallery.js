@@ -10,7 +10,12 @@
     this._controlLeftClick = this._controlLeftClick.bind(this);
     this._controlRightClick = this._controlRightClick.bind(this);
     this._onKeyClick = this._onKeyClick.bind(this);
+    this.currentNumber = 1;
+    this.previewNumberCurrent = document.querySelector('.preview-number-current');
+    this.previewNumberTotal = document.querySelector('.preview-number-total');
   };
+
+  Gallery.prototype.array = [];
 
   // Показать галерею
 
@@ -18,7 +23,7 @@
     this.element.classList.remove('invisible');
 
     // Показываем текущую картинку в галерее
-    this.setCurrentPicture(0);
+    // this.setCurrentPicture(0);
 
     // Обработчик клика по крестику
     this._closeButton.addEventListener('click', this._onCloseClick);
@@ -31,20 +36,25 @@
     document.addEventListener('keydown', this._onKeyClick);
   };
 
-  Gallery.prototype.setPictures = function(Photo) {
-    this._Photos = Photo.slice(0);
+  Gallery.prototype.setPictures = function(array) {
+    this.array = array;
   };
 
-  // Взято с кексобукинга, надо переделать под себя
+  // Метод setCurrentPicture(number) берет фотографию
+  // с переданным индексом из массива фотографий и отрисовывает показывает ее в галерее
 
   Gallery.prototype.setCurrentPicture = function(number) {
-    var IMAGE_HEIGHT = 300;
+    this.currentNumber = number;
     var image = new Image();
-    image.src = this._Photos[number]._src;
-    image.height = IMAGE_HEIGHT;
     var imageContainer = this.element.querySelector('.overlay-gallery-preview');
-
-    imageContainer.appendChild(image);
+    console.log(this.array[number]);
+    if (number < this.array.length) {
+      image.src = this.array[number].src;
+      imageContainer.querySelector.innerHTML = '';
+      imageContainer.appendChild(image);
+      this.previewNumberCurrent.textContent = number + 1;
+      this.previewNumberTotal.textContent = this.array.length;
+    }
   };
 
   // Скрыть галерею
@@ -73,9 +83,19 @@
   };
 
   Gallery.prototype._onKeyClick = function(e) {
-    if (e.keyCode === 27) {
-      this.hide();
-      console.log('закрытие галереи по нажатию ESC');
+    switch (e.keyCode) {
+      case 27:
+        this.hide();
+        console.log('закрытие галереи по нажатию ESC');
+        break;
+      case 37:
+        this._controlLeftClick();
+        console.log('левый контрол работает по нажатию на клавишу назад');
+        break;
+      case 39:
+        this._controlRightClick();
+        console.log('правый контрол работает по нажатию на клавишу вперед');
+        break;
     }
   };
 

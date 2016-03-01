@@ -2,7 +2,7 @@
 
 (function() {
   var Photo = function(src) {
-    this._src = src;
+    this.src = src;
   };
 
   window.Photo = Photo;

@@ -3,10 +3,10 @@
 (function() {
 
   function inherit(child, parent) {
-    var EmptyCtor = function() { };
+    function EmptyCtor() {}
     EmptyCtor.prototype = parent.prototype;
     child.prototype = new EmptyCtor();
   }
 
-  window.inherit = inherit();
+  window.inherit = inherit;
 })();

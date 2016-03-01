@@ -1,4 +1,4 @@
-/* global Review: true, Gallery: true */
+/* global Review: true*/
 
 'use strict';
 
@@ -11,23 +11,8 @@
   var filteredReviews = [];
   var currentPage = 0;
   var PAGE_SIZE = 3;
-  // Галерея
-  var photogallery = document.querySelector('.photogallery');
-  var gallery = new Gallery();
+  // Кнопка еще отзывы
   var moreReviewsButton = document.querySelector('.reviews-controls-more');
-
-  // Открываем галерею
-
-  photogallery.addEventListener('click', _onClick);
-
-  function _onClick(evt) {
-    evt.preventDefault();
-    var clickedElementImage = evt.target.parentElement;
-    if (clickedElementImage.classList.contains('photogallery-image')) {
-      gallery.show();
-      console.log('галерея открывается только по нажатию на фото');
-    }
-  }
 
   // Делегирование
 
@@ -63,7 +48,6 @@
       // Удаление каждого из элементов через вызов removeChild
       var renderedReviews = container.querySelectorAll('.review');
       [].forEach.call(renderedReviews, function(elem) {
-        elem.removeEventListener('click', _onClick);
         container.removeChild(elem);
         console.log('удаление работает');
       });

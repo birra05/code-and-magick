@@ -5,12 +5,19 @@
     this.element = document.querySelector('.overlay-gallery');
     this._closeButton = document.querySelector('.overlay-gallery-close');
     this._onCloseClick = this._onCloseClick.bind(this);
+    this._controls = document.querySelector('.overlay-gallery-controls');
     this._controlLeft = document.querySelector('.overlay-gallery-control-left');
     this._controlRight = document.querySelector('.overlay-gallery-control-right');
     this._controlLeftClick = this._controlLeftClick.bind(this);
     this._controlRightClick = this._controlRightClick.bind(this);
     this._onKeyClick = this._onKeyClick.bind(this);
+    this.previewNumberCurrent = document.querySelector('.preview-number-current');
+    this.previewNumberTotal = document.querySelector('.preview-number-total');
   };
+
+  // Чтобы потом пользоваться массивом, его надо определить
+
+  Gallery.prototype.array = [];
 
   // Показать галерею
 
@@ -28,6 +35,27 @@
     document.addEventListener('keydown', this._onKeyClick);
   };
 
+  Gallery.prototype.setPictures = function(array) {
+    this.array = array;
+  };
+
+  // Метод setCurrentPicture(number) берет фотографию
+  // с переданным индексом из массива фотографий и отрисовывает показывает ее в галерее
+
+  Gallery.prototype.setCurrentPicture = function(number) {
+    this.currentNumber = number;
+    var image = new Image();
+    var imageContainer = this.element.querySelector('.overlay-gallery-preview');
+    if (number < this.array.length) {
+      imageContainer.removeChild(imageContainer.lastChild);
+      image.src = this.array[number].src;
+      image.height = 500;
+      imageContainer.appendChild(image);
+      this.previewNumberCurrent.textContent = number + 1;
+      this.previewNumberTotal.textContent = this.array.length;
+    }
+  };
+
   // Скрыть галерею
 
   Gallery.prototype.hide = function() {
@@ -42,21 +70,31 @@
 
   Gallery.prototype._onCloseClick = function() {
     this.hide();
-    console.log('закрытие галереи по нажатию на крестик');
   };
 
   Gallery.prototype._controlLeftClick = function() {
-    console.log('левый контрол работает');
+    if (this.currentNumber >= 1) {
+      this.setCurrentPicture(this.currentNumber - 1);
+    }
   };
 
   Gallery.prototype._controlRightClick = function() {
-    console.log('правый контрол работает');
+    if (this.currentNumber < this.array.length - 1) {
+      this.setCurrentPicture(this.currentNumber + 1);
+    }
   };
 
   Gallery.prototype._onKeyClick = function(e) {
-    if (e.keyCode === 27) {
-      this.hide();
-      console.log('закрытие галереи по нажатию ESC');
+    switch (e.keyCode) {
+      case 27:
+        this.hide();
+        break;
+      case 37:
+        this._controlLeftClick();
+        break;
+      case 39:
+        this._controlRightClick();
+        break;
     }
   };
 

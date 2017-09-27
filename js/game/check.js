@@ -28,4 +28,6 @@ function getMessage(a,b) {
     };
     return ('Я прошёл ' + sum + ' шагов');
   }
-}
+};
+
+window.getMessage = getMessage;

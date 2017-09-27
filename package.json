@@ -14,8 +14,8 @@
   "homepage": "https://github.com/htmlacademy-javascript/36606-code-and-magick",
   "dependencies": {
     "eslint": "^1.10.3",
-    "webpack": "^1.12.14",
-    "webpack-dev-server": "^1.14.1"
+    "webpack": "2.1.0-beta.21",
+    "webpack-dev-server": "2.1.0-beta.9"
   },
   "scripts": {
     "gosha": "webpack --config webpack.config.js ./js/main.js",

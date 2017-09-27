@@ -10,7 +10,7 @@ module.exports = {
   entry: './js/main.js',
 
   output: {
-    filename: './out/main.js',
+    filename: 'out/main.js',
     path: path.resolve(__dirname),
     sourceMapFilename: '[file].map'
   },

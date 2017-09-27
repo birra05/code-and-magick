@@ -2,6 +2,8 @@
 
 'use strict';
 
+var docCookies = require('../../lib/cookies.js');
+
 (function() {
   var formContainer = document.querySelector('.overlay-container');
   var formOpenButton = document.querySelector('.reviews-controls-new');
@@ -89,7 +91,7 @@
   // Реакция формы на клики и ввод текста в разных полях
 
   function checkForm() {
-    console.log('check');
+    // console.log('check');
     reviewMarkCheck();
     reviewNameCheck();
     reviewTextCheck();

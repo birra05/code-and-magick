@@ -61,7 +61,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 14);
+/******/ 	return __webpack_require__(__webpack_require__.s = 11);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -126,12 +126,6 @@ var Verdict = {
   'INTRO': 4
 };
 
-function bind(func, context) {
-  return function() {
-    return func.apply(context, arguments);
-  };
-}
-
 module.exports = {
   inherit: inherit,
 
@@ -142,8 +136,7 @@ module.exports = {
   ObjectType: ObjectType,
   ObjectState: ObjectState,
   Direction: Direction,
-  Verdict: Verdict,
-  bind: bind
+  Verdict: Verdict
 };
 
 
@@ -151,18 +144,37 @@ module.exports = {
 /* 1 */
 /***/ function(module, exports, __webpack_require__) {
 
-"use strict";
-'use strict';
+var Gallery = __webpack_require__(5);
+var Photo = __webpack_require__(6);
+
+var gallery = new Gallery();
+
+var photogalleryItems = document.querySelectorAll('.photogallery-image img');
+// Собрать массив объектов Photo
+var photosArray = [].map.call(photogalleryItems, function(img, index) {
+  img.addEventListener('click', function(evt) {
+    evt.preventDefault();
+    gallery.show();
+    gallery.setCurrentPicture(index);
+  });
+  return new Photo(img.getAttribute('src'));
+});
+
+// Добавить массив фотографий в объект Gallery
+gallery.setPictures(photosArray);
+
+
+/***/ },
+/* 2 */
+/***/ function(module, exports, __webpack_require__) {
 
 var utils = __webpack_require__(0);
-var ObjectsBehaviour = __webpack_require__(11);
-var levels = __webpack_require__(10);
+var ObjectsBehaviour = __webpack_require__(8);
+var levels = __webpack_require__(7);
 
 /**
  * Конструктор объекта Game. Создает canvas, добавляет обработчики событий
  * и показывает приветственный экран.
- * @param {Element} container
- * @constructor
  */
 var Game = function(container) {
   this.container = container;
@@ -573,10 +585,6 @@ Game.prototype = {
     }
   },
 
-  /**
-   * @param {KeyboardEvent} evt [description]
-   * @private
-   */
   _onKeyDown: function(evt) {
     switch (evt.keyCode) {
       case 37:
@@ -619,274 +627,172 @@ Game.prototype = {
     }
   },
 
+  setParallax: function() {
+    var clouds = document.querySelector('.header-clouds');
+    var gameBlock = document.querySelector('.demo');
+    var IMAGE_WIDTH = 1024;
+    var scrollTimeout;
+    var cloudsStart = (clouds.getBoundingClientRect().width - IMAGE_WIDTH) / 2;
+
+    if (clouds.getBoundingClientRect().bottom > 0) {
+      clouds.style.backgroundPosition = cloudsStart - (clouds.getBoundingClientRect().bottom - clouds.getBoundingClientRect().height) + 'px';
+    }
+
+    clearTimeout(scrollTimeout);
+    scrollTimeout = setTimeout(function() {
+      if (gameBlock.getBoundingClientRect().bottom <= 0) {
+        game.setGameStatus(Game.Verdict.PAUSE);
+      }
+    }, 100);
+  },
+
   _initializeGameListeners: function() {
     window.addEventListener('keydown', this._onKeyDown);
     window.addEventListener('keyup', this._onKeyUp);
+    window.addEventListener('scroll', this.setParallax);
   },
 
   _removeGameListeners: function() {
     window.removeEventListener('keydown', this._onKeyDown);
     window.removeEventListener('keyup', this._onKeyUp);
+    window.removeEventListener('scroll', this.setParallax);
   }
 };
 
 Game.Verdict = utils.Verdict;
 
-var game = new Game(document.querySelector('.demo'));
+var gameBlock = document.querySelector('.demo');
+var game = new Game(gameBlock);
 game.initializeLevelAndStart();
 game.setGameStatus(Game.Verdict.INTRO);
-
-module.exports = game;
-
-
-/***/ },
-/* 2 */
-/***/ function(module, exports, __webpack_require__) {
-
-"use strict";
-'use strict';
-
-var Gallery = __webpack_require__(8);
-var Photo = __webpack_require__(9);
-
-var gallery = new Gallery();
-
-var photogalleryItems = document.querySelectorAll('.photogallery-image img');
-// Собрать массив объектов Photo
-var photosArray = [].map.call(photogalleryItems, function(img, index) {
-  img.addEventListener('click', function(evt) {
-    evt.preventDefault();
-    gallery.show();
-    gallery.setCurrentPicture(index);
-  });
-  return new Photo(img.getAttribute('src'));
-});
-
-// Добавить массив фотографий в объект Gallery
-gallery.setPictures(photosArray);
 
 
 /***/ },
 /* 3 */
-/***/ function(module, exports) {
+/***/ function(module, exports, __webpack_require__) {
 
-"use strict";
-'use strict';
+var docCookies = __webpack_require__(10);
 
-function getMessage(a,b) {
-  if (a === true) {
-    return ('Я попал в' + b);
-  }
+var formContainer = document.querySelector('.overlay-container');
+var formOpenButton = document.querySelector('.reviews-controls-new');
+var formCloseButton = document.querySelector('.review-form-close');
 
-  else if (a === false) {
-    return ('Я никуда не попал');
-  }
-
-  else if (typeof(a) == 'number') {
-    return ('Я прыгнул на ' + a*100 + ' сантиметров');
-  }
-
-  else if (a instanceof Array && b instanceof Array) {
-    var length = 0;
-    for (var i = 0; i <a.length; i++) {
-      length = length + (a[i]*b[i]);
-    };
-    return ('Я прошёл ' + length + ' метров');
-  }
-
-  else if (a instanceof Array) {
-    var sum = 0;
-    for (var i = 0; i <a.length; i++) {
-      sum = sum + a[i];
-    };
-    return ('Я прошёл ' + sum + ' шагов');
-  }
+formOpenButton.onclick = function(evt) {
+  evt.preventDefault();
+  formContainer.classList.remove('invisible');
+  checkForm();
 };
 
-window.getMessage = getMessage;
+formCloseButton.onclick = function(evt) {
+  evt.preventDefault();
+  formContainer.classList.add('invisible');
+};
 
+var reviewForm = document.querySelector('.review-form');
+var reviewName = document.getElementById('review-name');
+var reviewText = document.getElementById('review-text');
+var reviewMark = reviewForm['review-mark'];
+var reviewSubmit = document.querySelector('.review-submit');
+var reviewFields = document.querySelector('.review-fields');
+var reviewNameLabel = reviewFields.querySelector('label[for="review-name"]');
+var reviewTextLabel = reviewFields.querySelector('label[for="review-text"]');
 
-/***/ },
-/* 4 */
-/***/ function(module, exports) {
+// Установка начальных значений в полях, берем из cookies
 
-"use strict";
-"use strict";!function(){function a(a,b,c,d,e,f){for(var g=b.split("\n"),h=0;h<g.length;h++){for(var i="",j=g[h].split(" "),k=0;k<j.length;k++){var l=i+j[k]+" ",m=a.measureText(l),n=m.width;n>e?(a.fillText(i,c,d),i=j[k]+" ",d+=f):i=l}a.fillText(i,c,d),d+=f}}function b(a,b,c){c.moveTo(a+.3*e,b+.3*d),c.lineTo(a+.8*e,b+.3*d-10),c.lineTo(a+.8*e-30,b+.7*d),c.lineTo(a+.3*e-30,b+.7*d+30),c.lineTo(a+.3*e+4,b+.3*d-4),c.fill(),c.stroke()}function c(){return"function"==typeof window.getMessage?window.getMessage.apply(null,arguments):"\u041d\u0435 \u043d\u0430\u0439\u0434\u0435\u043d\u0430 \u0444\u0443\u043d\u043a\u0446\u0438\u044f getMessage, \u043a\u043e\u0442\u043e\u0440\u0430\u044f \u0434\u043e\u043b\u0436\u043d\u0430 \u0431\u044b\u0442\u044c \u043e\u0431\u044a\u044f\u0432\u043b\u0435\u043d\u0430 \u0432 \u0433\u043b\u043e\u0431\u0430\u043b\u044c\u043d\u043e\u0439 \u043e\u0431\u043b\u0430\u0441\u0442\u0438 \u0432\u0438\u0434\u0438\u043c\u043e\u0441\u0442\u0438 \u0432 \u0444\u0430\u0439\u043b\u0435 check.js"}function s(){var a=q.container.getBoundingClientRect();(a.bottom<.75*d||a.top>window.innerHeight-.5*d)&&q.setGameStatus(p.Verdict.PAUSE)}function w(){var a=r.getBoundingClientRect();a.bottom>0&&(r.style.backgroundPositionX=-document.body.scrollTop/2+"px")}var d=300,e=700,f={INTRO:0},g=[f.INTRO],h=g[0],i={ME:0,FIREBALL:1},j={OK:0,DISPOSED:1},k={NULL:0,LEFT:1,RIGHT:2,UP:4,DOWN:8},l={};l[i.ME]=function(a,b,c){b.keysPressed.UP&&a.y>0&&(a.direction=a.direction&~k.DOWN,a.direction=a.direction|k.UP,a.y-=a.speed*c*2,a.y<0&&(a.y=0)),b.keysPressed.UP||(a.y<d-a.height?(a.direction=a.direction&~k.UP,a.direction=a.direction|k.DOWN,a.y+=a.speed*c/3):a.direction=a.direction&~k.DOWN),b.keysPressed.LEFT&&(a.direction=a.direction&~k.RIGHT,a.direction=a.direction|k.LEFT,a.x-=a.speed*c),b.keysPressed.RIGHT&&(a.direction=a.direction&~k.LEFT,a.direction=a.direction|k.RIGHT,a.x+=a.speed*c),a.y<0&&(a.y=0,a.Direction=a.direction&~k.DOWN,a.Direction=a.direction&~k.UP),a.y>d-a.height&&(a.y=d-a.height,a.Direction=a.direction&~k.DOWN,a.Direction=a.direction&~k.UP),a.x<0&&(a.x=0),a.x>e-a.width&&(a.x=e-a.width)},l[i.FIREBALL]=function(a,b,c){a.direction&k.LEFT&&(a.x-=a.speed*c),a.direction&k.RIGHT&&(a.x+=a.speed*c),(a.x<0||a.x>e)&&(a.state=j.DISPOSED)};var m={CONTINUE:0,WIN:1,FAIL:2,PAUSE:3,INTRO:4},n={};n[f.INTRO]=function(){return m.CONTINUE};var o={};o[f.INTRO]=function(a){return a.objects.push({direction:k.RIGHT,height:84,speed:2,sprite:"img/wizard.gif",spriteReversed:"img/wizard-reversed.gif",state:j.OK,type:i.ME,width:61,x:e/2,y:d-100}),a};var p=function(a){this.container=a,this.canvas=document.createElement("canvas"),this.canvas.width=a.clientWidth,this.canvas.height=a.clientHeight,this.container.appendChild(this.canvas),this.ctx=this.canvas.getContext("2d"),this._onKeyDown=this._onKeyDown.bind(this),this._onKeyUp=this._onKeyUp.bind(this),this._pauseListener=this._pauseListener.bind(this)};p.prototype={level:h,getInitialState:function(){return{currentStatus:m.CONTINUE,garbage:[],lastUpdated:null,keysPressed:{ESC:!1,LEFT:!1,RIGHT:!1,SPACE:!1,UP:!1},levelStartTime:null,objects:[],startTime:null,customMessage:null}},initializeLevelAndStart:function(a,b){a="undefined"==typeof a?this.level:a,b="undefined"==typeof b?!0:b,b||!this.state?this.state=this._getInitialLevelState(this.level):this.state.currentStatus=m.CONTINUE,this.state.levelStartTime=Date.now(),this.state.startTime||(this.state.startTime=this.state.levelStartTime),this._preloadImagesForLevel(function(){this.render(),this._initializeGameListeners(),this.update()}.bind(this))},pauseLevel:function(a){a&&(this.state.currentStatus=a),this.state.keysPressed.ESC=!1,this.state.lastUpdated=null,this._removeGameListeners(),window.addEventListener("keydown",this._pauseListener),this._drawPauseScreen()},_pauseListener:function(a){if(32===a.keyCode){a.preventDefault();var b=this.state.currentStatus===m.WIN||this.state.currentStatus===m.FAIL;this.initializeLevelAndStart(this.level,b),window.removeEventListener("keydown",this._pauseListener)}},_drawMessage:function(c,f){f=!!f,f?this.ctx.strokeStyle="red":this.ctx.strokeStyle="#0066ff",this.ctx.lineWidth=10,this.ctx.fillStyle="white",this.ctx.font="16px PT Mono",b(0,0,this.ctx),this.ctx.fillStyle="black";var g=.3*d+30;f||(g+=30),a(this.ctx,c,.3*e+15,g,.75*e-.3*e-10,20)},_drawPauseScreen:function(){switch(this.state.currentStatus){case m.WIN:this._drawMessage(this.state.customMessage+". \u041f\u0440\u043e\u0431\u0435\u043b \u0434\u043b\u044f \u0440\u0435\u0441\u0442\u0430\u0440\u0442\u0430."||"you have won!");break;case m.FAIL:this._drawMessage(this.state.customMessage+". \u041f\u0440\u043e\u0431\u0435\u043b \u0434\u043b\u044f \u0440\u0435\u0441\u0442\u0430\u0440\u0442\u0430."||"you have failed!",!0);break;case m.PAUSE:this._drawMessage("\u041f\u0430\u0443\u0437\u0430. \u041d\u0430\u0436\u043c\u0438\u0442\u0435 \u043f\u0440\u043e\u0431\u0435\u043b \u0434\u043b\u044f \u043f\u0440\u043e\u0434\u043e\u043b\u0436\u0435\u043d\u0438\u044f \u0438\u0433\u0440\u044b");break;case m.INTRO:this._drawMessage("\u0414\u043b\u044f \u043d\u0430\u0447\u0430\u043b\u0430 \u0438\u0433\u0440\u044b \u043d\u0430\u0436\u043c\u0438\u0442\u0435 \u043f\u0440\u043e\u0431\u0435\u043b")}},_preloadImagesForLevel:function(a){if("undefined"==typeof this._imagesArePreloaded&&(this._imagesArePreloaded=[]),this._imagesArePreloaded[this.level])return void a();var b=[];this.state.objects.forEach(function(a){b.push(a.sprite),a.spriteReversed&&b.push(a.spriteReversed)});for(var c=b.length,d=b.length;c-->0;){var e=new Image;e.src=b[c],e.onload=function(){0===--d&&(this._imagesArePreloaded[this.level]=!0,a())}.bind(this)}},updateObjects:function(a){var b=this.state.objects.filter(function(a){return a.type===i.ME})[0];this.state.keysPressed.SHIFT&&(this.state.objects.push({direction:b.direction,height:24,speed:5,sprite:"img/fireball.gif",type:i.FIREBALL,width:24,x:b.direction&k.RIGHT?b.x+b.width:b.x-24,y:b.y+b.height/2}),this.state.keysPressed.SHIFT=!1),this.state.garbage=[];var c=this.state.objects.filter(function(b){return l[b.type](b,this.state,a),b.state===j.DISPOSED?(this.state.garbage.push(b),!1):!0},this);this.state.objects=c},checkStatus:function(){if(this.state.currentStatus===m.CONTINUE){this.commonRules||(this.commonRules=[function(a){var b=this._getInitialLevelState(f.INTRO),d=this._getMe(a),e=this._getMe(b);return d.x-e.x>=200?(a.customMessage=c([1,2,3,4]),"\u042f \u043f\u0440\u043e\u0448\u0451\u043b 10 \u0448\u0430\u0433\u043e\u0432"===a.customMessage?m.WIN:m.FAIL):m.CONTINUE},function(a){var b=this._getInitialLevelState(f.INTRO),d=this._getMe(a),e=this._getMe(b);return d.x-e.x<=-200?(a.customMessage=c([1,2,3,4],[4,3,2,1]),"\u042f \u043f\u0440\u043e\u0448\u0451\u043b 20 \u043c\u0435\u0442\u0440\u043e\u0432"===a.customMessage?m.WIN:m.FAIL):m.CONTINUE},function(a){var b=this._getMe(a);return b.y<=10?(a.customMessage=c(2),"\u042f \u043f\u0440\u044b\u0433\u043d\u0443\u043b \u043d\u0430 200 \u0441\u0430\u043d\u0442\u0438\u043c\u0435\u0442\u0440\u043e\u0432"===a.customMessage?m.WIN:m.FAIL):m.CONTINUE},function(a){function g(a){return!!(a.direction&k.RIGHT)&&a.x>=e-10&&a.y>=b&&a.y<=f}var h,b=.5*d,f=.75*d;if(a.garbage.length){var j=a.garbage.filter(function(a){return a.type===i.FIREBALL});j.length&&(h=j[0])}if(h){var l=g(h);return a.customMessage=c(l,"\u043a\u0440\u043e\u043d\u0443 \u0434\u0435\u0440\u0435\u0432\u0430"),l?"\u042f \u043f\u043e\u043f\u0430\u043b \u0432 \u043a\u0440\u043e\u043d\u0443 \u0434\u0435\u0440\u0435\u0432\u0430"===a.customMessage?m.WIN:m.FAIL:"\u042f \u043d\u0438\u043a\u0443\u0434\u0430 \u043d\u0435 \u043f\u043e\u043f\u0430\u043b"===a.customMessage?m.WIN:m.FAIL}return m.CONTINUE},function(a){return a.keysPressed.ESC?m.PAUSE:m.CONTINUE}]);for(var g,a=this.commonRules.concat(n[this.level]),b=m.CONTINUE;b===m.CONTINUE&&a.length;)g=a.shift(),b=g.call(this,this.state);this.state.currentStatus=b}},setGameStatus:function(a){this.state.currentStatus!==a&&(this.state.currentStatus=a)},render:function(){this.ctx.clearRect(0,0,e,d),this.state.objects.forEach(function(a){if(a.sprite){var b=new Image(a.width,a.height);b.src=a.spriteReversed&&a.direction&k.LEFT?a.spriteReversed:a.sprite,this.ctx.drawImage(b,a.x,a.y,a.width,a.height)}},this)},update:function(){this.state.lastUpdated||(this.state.lastUpdated=Date.now());var a=(Date.now()-this.state.lastUpdated)/10;switch(this.updateObjects(a),this.checkStatus(),this.state.currentStatus){case m.CONTINUE:this.state.lastUpdated=Date.now(),this.render(),requestAnimationFrame(function(){this.update()}.bind(this));break;case m.WIN:case m.FAIL:case m.PAUSE:case m.INTRO:default:this.pauseLevel()}},_onKeyDown:function(a){switch(a.keyCode){case 37:a.preventDefault(),this.state.keysPressed.LEFT=!0;break;case 39:a.preventDefault(),this.state.keysPressed.RIGHT=!0;break;case 38:a.preventDefault(),this.state.keysPressed.UP=!0;break;case 27:a.preventDefault(),this.state.keysPressed.ESC=!0}a.shiftKey&&(this.state.keysPressed.SHIFT=!0)},_onKeyUp:function(a){switch(a.keyCode){case 37:this.state.keysPressed.LEFT=!1;break;case 39:this.state.keysPressed.RIGHT=!1;break;case 38:this.state.keysPressed.UP=!1;break;case 27:this.state.keysPressed.ESC=!1}a.shiftKey&&(this.state.keysPressed.SHIFT=!1)},_initializeGameListeners:function(){window.addEventListener("keydown",this._onKeyDown),window.addEventListener("keyup",this._onKeyUp)},_removeGameListeners:function(){window.removeEventListener("keydown",this._onKeyDown),window.removeEventListener("keyup",this._onKeyUp)},_getMe:function(a){return a.objects.filter(function(a){return a.type===i.ME})[0]},_getInitialLevelState:function(a){var b=this.getInitialState();return o[a](b)}},window.Game=p,window.Game.Verdict=m;var q=new p(document.querySelector(".demo"));q.initializeLevelAndStart(),q.setGameStatus(p.Verdict.CONTINUE);var t,v,r=document.querySelector(".header-clouds"),u=!1;window.addEventListener("scroll",function(){v||(v=Date.now()),u||(u=!0,requestAnimationFrame(function(){w(),u=!1})),clearTimeout(t),t=setTimeout(s,100),v=Date.now()}),w()}();
+reviewName.value = docCookies.getItem('name') || '';
+reviewMark.value = docCookies.getItem('mark') || 3;
 
-/***/ },
-/* 5 */
-/***/ function(module, exports, __webpack_require__) {
+reviewName.oninput = checkForm;
+reviewText.oninput = checkForm;
 
-"use strict";
-'use strict';
+// По умолчанию поле Отзыв не является обязательным
 
-var utils = __webpack_require__(0);
-var game = __webpack_require__(1);
+reviewName.required = true;
+reviewTextLabel.classList.add('invisible');
+reviewSubmit.disabled = true;
 
-// Двигаем облачка, ставим таймаут и паузу
+// Поле Отзыв становится обязательным, если оценка ниже или равна 3
 
-var clouds = document.querySelector('.header-clouds');
-var gameBlock = document.querySelector('.demo');
-var IMAGE_WIDTH = 1024;
-var scrollTimeout;
-var cloudsStart = (clouds.getBoundingClientRect().width - IMAGE_WIDTH) / 2;
-
-window.addEventListener('scroll', function() {
-
-  // В зависимости от положения прокрутки смещается положение блока с облачками
-
-  if (clouds.getBoundingClientRect().bottom > 0) {
-    clouds.style.backgroundPosition = cloudsStart - (clouds.getBoundingClientRect().bottom - clouds.getBoundingClientRect().height) + 'px';
-  }
-
-  function setPause() {
-    if (gameBlock.getBoundingClientRect().bottom <= 0) {
-      game.setGameStatus(Game.Verdict.PAUSE);
-    }
-  };
-  scrollTimeout = setTimeout(setPause, 100);
-  clearTimeout(scrollTimeout);
-});
-
-
-/***/ },
-/* 6 */
-/***/ function(module, exports, __webpack_require__) {
-
-"use strict";
-/*global docCookies*/
-
-'use strict';
-
-var docCookies = __webpack_require__(13);
-
-(function() {
-  var formContainer = document.querySelector('.overlay-container');
-  var formOpenButton = document.querySelector('.reviews-controls-new');
-  var formCloseButton = document.querySelector('.review-form-close');
-
-  formOpenButton.onclick = function(evt) {
-    evt.preventDefault();
-    formContainer.classList.remove('invisible');
-    checkForm();
-  };
-
-  formCloseButton.onclick = function(evt) {
-    evt.preventDefault();
-    formContainer.classList.add('invisible');
-  };
-
-  var reviewForm = document.querySelector('.review-form');
-  var reviewName = document.getElementById('review-name');
-  var reviewText = document.getElementById('review-text');
-  var reviewMark = reviewForm['review-mark'];
-  var reviewSubmit = document.querySelector('.review-submit');
-  var reviewFields = document.querySelector('.review-fields');
-  var reviewNameLabel = reviewFields.querySelector('label[for="review-name"]');
-  var reviewTextLabel = reviewFields.querySelector('label[for="review-text"]');
-
-  // Установка начальных значений в полях, берем из cookies
-
-  reviewName.value = docCookies.getItem('name') || '';
-  reviewMark.value = docCookies.getItem('mark') || 3;
-
-  reviewName.oninput = checkForm;
-  reviewText.oninput = checkForm;
-
-  // По умолчанию поле Отзыв не является обязательным
-
-  reviewName.required = true;
-  reviewTextLabel.classList.add('invisible');
-  reviewSubmit.disabled = true;
-
-  // Поле Отзыв становится обязательным, если оценка ниже или равна 3
-
-  function reviewMarkCheck() {
-    for (var i = 0; i < reviewMark.length; i++) {
-      reviewMark[i].onclick = checkForm;
-      if (reviewMark[i].checked) {
-        if (parseInt(reviewMark[i].value, 10) < 4) {
-          reviewTextLabel.classList.remove('invisible');
-        } else {
-          reviewTextLabel.classList.add('invisible');
-        }
-      }
-    }
-  }
-
-  // «Ссылки» исчезают из блока по мере заполнения полей формы
-
-  function reviewNameCheck() {
-    if (reviewName.value === '') {
-      reviewNameLabel.classList.remove('invisible');
-    } else {
-      reviewNameLabel.classList.add('invisible');
-    }
-  }
-
-  function reviewTextCheck() {
-    if (!reviewTextLabel.classList.contains('invisible')) {
-      if (reviewText.value !== '' && typeof reviewText.value !== 'undefined') {
+function reviewMarkCheck() {
+  for (var i = 0; i < reviewMark.length; i++) {
+    reviewMark[i].onclick = checkForm;
+    if (reviewMark[i].checked) {
+      if (parseInt(reviewMark[i].value, 10) < 4) {
+        reviewTextLabel.classList.remove('invisible');
+      } else {
         reviewTextLabel.classList.add('invisible');
       }
     }
   }
+}
 
-  // Если все обязательные поля заполнены, блок .review-fields исчезает целиком.
+// «Ссылки» исчезают из блока по мере заполнения полей формы
 
-  function reviewBlockVisible() {
-    if (reviewNameLabel.classList.contains('invisible') && reviewTextLabel.classList.contains('invisible')) {
-      reviewFields.classList.add('invisible');
-      reviewSubmit.disabled = false;
-    } else {
-      reviewFields.classList.remove('invisible');
-      reviewSubmit.disabled = true;
+function reviewNameCheck() {
+  if (reviewName.value === '') {
+    reviewNameLabel.classList.remove('invisible');
+  } else {
+    reviewNameLabel.classList.add('invisible');
+  }
+}
+
+function reviewTextCheck() {
+  if (!reviewTextLabel.classList.contains('invisible')) {
+    if (reviewText.value !== '' && typeof reviewText.value !== 'undefined') {
+      reviewTextLabel.classList.add('invisible');
     }
   }
+}
 
-  // Реакция формы на клики и ввод текста в разных полях
+// Если все обязательные поля заполнены, блок .review-fields исчезает целиком.
 
-  function checkForm() {
-    // console.log('check');
-    reviewMarkCheck();
-    reviewNameCheck();
-    reviewTextCheck();
-    reviewBlockVisible();
+function reviewBlockVisible() {
+  if (reviewNameLabel.classList.contains('invisible') && reviewTextLabel.classList.contains('invisible')) {
+    reviewFields.classList.add('invisible');
+    reviewSubmit.disabled = false;
+  } else {
+    reviewFields.classList.remove('invisible');
+    reviewSubmit.disabled = true;
+  }
+}
+
+// Реакция формы на клики и ввод текста в разных полях
+
+function checkForm() {
+  reviewMarkCheck();
+  reviewNameCheck();
+  reviewTextCheck();
+  reviewBlockVisible();
+}
+
+// Определяем cookies
+
+reviewForm.onsubmit = function(evt) {
+  evt.preventDefault();
+
+  var nowDate = new Date();
+  // День рождения - 5 ноября
+  var birthDate = new Date(nowDate.getFullYear(), 10, 5);
+  var lastYear = nowDate.getFullYear() - 1;
+  if (nowDate < birthDate) {
+    var lastBirthDate = new Date(lastYear, 10, 5);
   }
 
-  // Определяем cookies
+  var dateToExpire = new Date(nowDate.valueOf() + (nowDate - lastBirthDate));
+  var formatDateToExpire = new Date(dateToExpire).toUTCString();
 
-  reviewForm.onsubmit = function(evt) {
-    evt.preventDefault();
+  docCookies.setItem('name', reviewName.value, formatDateToExpire);
+  docCookies.setItem('mark', reviewMark.value, formatDateToExpire);
 
-    var nowDate = new Date();
-    // День рождения - 5 ноября
-    var birthDate = new Date(nowDate.getFullYear(), 10, 5);
-    var lastYear = nowDate.getFullYear() - 1;
-    if (nowDate < birthDate) {
-      var lastBirthDate = new Date(lastYear, 10, 5);
-    }
-
-    var dateToExpire = new Date(nowDate.valueOf() + (nowDate - lastBirthDate));
-    var formatDateToExpire = new Date(dateToExpire).toUTCString();
-
-    docCookies.setItem('name', reviewName.value, formatDateToExpire);
-    docCookies.setItem('mark', reviewMark.value, formatDateToExpire);
-
-    reviewForm.submit();
-  };
-
-})();
+  reviewForm.submit();
+};
 
 
 /***/ },
-/* 7 */
+/* 4 */
 /***/ function(module, exports, __webpack_require__) {
 
-"use strict";
-'use strict';
-
-var Review = __webpack_require__(12);
+var Review = __webpack_require__(9);
 
 var reviewFilter = document.querySelector('.reviews-filter');
 var reviewsBlock = document.querySelector('.reviews');
@@ -1035,11 +941,8 @@ reviewFilter.classList.remove('invisible');
 
 
 /***/ },
-/* 8 */
+/* 5 */
 /***/ function(module, exports) {
-
-"use strict";
-'use strict';
 
 var Gallery = function() {
   this.element = document.querySelector('.overlay-gallery');
@@ -1142,11 +1045,8 @@ module.exports = Gallery;
 
 
 /***/ },
-/* 9 */
+/* 6 */
 /***/ function(module, exports) {
-
-"use strict";
-'use strict';
 
 var Photo = function(src) {
   this.src = src;
@@ -1156,11 +1056,8 @@ module.exports = Photo;
 
 
 /***/ },
-/* 10 */
+/* 7 */
 /***/ function(module, exports, __webpack_require__) {
-
-"use strict";
-'use strict';
 
 var utils = __webpack_require__(0);
 
@@ -1216,11 +1113,8 @@ module.exports = {
 
 
 /***/ },
-/* 11 */
+/* 8 */
 /***/ function(module, exports, __webpack_require__) {
-
-"use strict";
-'use strict';
 
 var utils = __webpack_require__(0);
 
@@ -1300,16 +1194,19 @@ ObjectsBehaviour[utils.ObjectType.ME] = function(object, state, timeframe) {
 // он пролетает весь экран насквозь, он исчезает.
 
 ObjectsBehaviour[utils.ObjectType.FIREBALL] = function(object, state, timeframe) {
-  if (object.direction & Direction.LEFT) {
+  if (object.direction & utils.Direction.LEFT) {
     object.x -= object.speed * timeframe;
+    console.log('what');
   }
 
-  if (object.direction & Direction.RIGHT) {
+  if (object.direction & utils.Direction.RIGHT) {
     object.x += object.speed * timeframe;
+    console.log('what-2');
   }
 
   if (object.x < 0 || object.x > utils.WIDTH) {
     object.state = utils.ObjectState.DISPOSED;
+    console.log('what-3');
   }
 };
 
@@ -1317,11 +1214,8 @@ module.exports = ObjectsBehaviour;
 
 
 /***/ },
-/* 12 */
+/* 9 */
 /***/ function(module, exports) {
-
-"use strict";
-'use strict';
 
 function Review(data) {
   this._data = data;
@@ -1378,7 +1272,7 @@ module.exports = Review;
 
 
 /***/ },
-/* 13 */
+/* 10 */
 /***/ function(module, exports) {
 
 /**
@@ -1468,19 +1362,13 @@ module.exports = docCookies;
 
 
 /***/ },
-/* 14 */
+/* 11 */
 /***/ function(module, exports, __webpack_require__) {
 
-"use strict";
-'use strict';
-
-__webpack_require__(3);
+__webpack_require__(2);
 __webpack_require__(1);
 __webpack_require__(4);
-__webpack_require__(5);
-__webpack_require__(2);
-__webpack_require__(7);
-__webpack_require__(6);
+__webpack_require__(3);
 
 
 /***/ }

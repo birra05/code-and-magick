@@ -56,12 +56,6 @@ var Verdict = {
   'INTRO': 4
 };
 
-function bind(func, context) {
-  return function() {
-    return func.apply(context, arguments);
-  };
-}
-
 module.exports = {
   inherit: inherit,
 
@@ -72,6 +66,5 @@ module.exports = {
   ObjectType: ObjectType,
   ObjectState: ObjectState,
   Direction: Direction,
-  Verdict: Verdict,
-  bind: bind
+  Verdict: Verdict
 };

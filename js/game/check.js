@@ -1,5 +1,3 @@
-'use strict';
-
 function getMessage(a,b) {
   if (a === true) {
     return ('Я попал в' + b);
@@ -30,4 +28,4 @@ function getMessage(a,b) {
   }
 };
 
-window.getMessage = getMessage;
+// window.getMessage = getMessage;

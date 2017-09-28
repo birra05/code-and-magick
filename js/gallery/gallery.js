@@ -1,5 +1,3 @@
-'use strict';
-
 var Gallery = function() {
   this.element = document.querySelector('.overlay-gallery');
   this._closeButton = document.querySelector('.overlay-gallery-close');

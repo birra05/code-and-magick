@@ -1,5 +1,3 @@
-'use strict';
-
 var utils = require('../base/utils');
 var ObjectsBehaviour = require('./objects-behaviour');
 var levels = require('./levels');
@@ -7,8 +5,6 @@ var levels = require('./levels');
 /**
  * Конструктор объекта Game. Создает canvas, добавляет обработчики событий
  * и показывает приветственный экран.
- * @param {Element} container
- * @constructor
  */
 var Game = function(container) {
   this.container = container;
@@ -419,10 +415,6 @@ Game.prototype = {
     }
   },
 
-  /**
-   * @param {KeyboardEvent} evt [description]
-   * @private
-   */
   _onKeyDown: function(evt) {
     switch (evt.keyCode) {
       case 37:
@@ -465,21 +457,41 @@ Game.prototype = {
     }
   },
 
+  setParallax: function() {
+    var clouds = document.querySelector('.header-clouds');
+    var gameBlock = document.querySelector('.demo');
+    var IMAGE_WIDTH = 1024;
+    var scrollTimeout;
+    var cloudsStart = (clouds.getBoundingClientRect().width - IMAGE_WIDTH) / 2;
+
+    if (clouds.getBoundingClientRect().bottom > 0) {
+      clouds.style.backgroundPosition = cloudsStart - (clouds.getBoundingClientRect().bottom - clouds.getBoundingClientRect().height) + 'px';
+    }
+
+    clearTimeout(scrollTimeout);
+    scrollTimeout = setTimeout(function() {
+      if (gameBlock.getBoundingClientRect().bottom <= 0) {
+        game.setGameStatus(Game.Verdict.PAUSE);
+      }
+    }, 100);
+  },
+
   _initializeGameListeners: function() {
     window.addEventListener('keydown', this._onKeyDown);
     window.addEventListener('keyup', this._onKeyUp);
+    window.addEventListener('scroll', this.setParallax);
   },
 
   _removeGameListeners: function() {
     window.removeEventListener('keydown', this._onKeyDown);
     window.removeEventListener('keyup', this._onKeyUp);
+    window.removeEventListener('scroll', this.setParallax);
   }
 };
 
 Game.Verdict = utils.Verdict;
 
-var game = new Game(document.querySelector('.demo'));
+var gameBlock = document.querySelector('.demo');
+var game = new Game(gameBlock);
 game.initializeLevelAndStart();
 game.setGameStatus(Game.Verdict.INTRO);
-
-module.exports = game;

@@ -1,5 +1,3 @@
-'use strict';
-
 var utils = require('../base/utils');
 
 // Правила перерисовки объектов в зависимости от состояния игры.
@@ -78,16 +76,19 @@ ObjectsBehaviour[utils.ObjectType.ME] = function(object, state, timeframe) {
 // он пролетает весь экран насквозь, он исчезает.
 
 ObjectsBehaviour[utils.ObjectType.FIREBALL] = function(object, state, timeframe) {
-  if (object.direction & Direction.LEFT) {
+  if (object.direction & utils.Direction.LEFT) {
     object.x -= object.speed * timeframe;
+    console.log('what');
   }
 
-  if (object.direction & Direction.RIGHT) {
+  if (object.direction & utils.Direction.RIGHT) {
     object.x += object.speed * timeframe;
+    console.log('what-2');
   }
 
   if (object.x < 0 || object.x > utils.WIDTH) {
     object.state = utils.ObjectState.DISPOSED;
+    console.log('what-3');
   }
 };
 

@@ -1,5 +1,3 @@
-'use strict';
-
 var Gallery = require('./gallery');
 var Photo = require('./photo');
 

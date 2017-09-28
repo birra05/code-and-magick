@@ -1,5 +1,3 @@
-'use strict';
-
 var Review = require('./review');
 
 var reviewFilter = document.querySelector('.reviews-filter');

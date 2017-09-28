@@ -1,5 +1,3 @@
-'use strict';
-
 function Review(data) {
   this._data = data;
 }

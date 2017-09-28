@@ -1,5 +1,3 @@
-'use strict';
-
 var Photo = function(src) {
   this.src = src;
 };
